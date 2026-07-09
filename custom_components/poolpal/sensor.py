@@ -3,10 +3,11 @@ from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.components import mqtt
+from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from .const import (
     DOMAIN,
-    CONF_MQTT_TOPIC,
+    CONF_SOURCE_ENTITY,
     CONF_CALIBRATION_FACTOR,
     CONF_DEVICE_IDENTIFIERS,
     CONF_DEVICE_CONNECTIONS,
@@ -34,11 +35,10 @@ class PoolPalSensor(SensorEntity):
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         self.hass = hass
         self._entry = entry
-        self._topic = entry.data[CONF_MQTT_TOPIC]
+        self._source_entity = entry.data[CONF_SOURCE_ENTITY]
         self._calibration = entry.data[CONF_CALIBRATION_FACTOR]
         self._attr_name = entry.data.get("name", "PoolPal Sensor")
         self._attr_unique_id = f"{DOMAIN}_{entry.entry_id}"
-        self._unsub_mqtt = None
 
         identifiers_raw = entry.data.get(CONF_DEVICE_IDENTIFIERS, [])
         connections_raw = entry.data.get(CONF_DEVICE_CONNECTIONS, [])
@@ -50,22 +50,27 @@ class PoolPalSensor(SensorEntity):
         self._attr_device_info = device_info or None
 
     async def async_added_to_hass(self) -> None:
-        @callback
-        def message_received(msg):
-            try:
-                raw = float(msg.payload)
-                self._attr_native_value = raw * self._calibration
-                self.async_write_ha_state()
-            except (ValueError, TypeError):
-                _LOGGER.warning(
-                    "Non-numeric payload on %s: %s", self._topic, msg.payload
-                )
-
-        self._unsub_mqtt = await mqtt.async_subscribe(
-            self.hass, self._topic, message_received, qos=0
+        self.async_on_remove(
+            async_track_state_change_event(
+                self.hass, [self._source_entity], self._handle_state_change
+            )
         )
+        state = self.hass.states.get(self._source_entity)
+        if state is not None and state.state not in (STATE_UNAVAILABLE, STATE_UNKNOWN):
+            try:
+                self._attr_native_value = float(state.state) * self._calibration
+            except (ValueError, TypeError):
+                pass
 
-    async def async_will_remove_from_hass(self) -> None:
-        if self._unsub_mqtt:
-            self._unsub_mqtt()
-            self._unsub_mqtt = None
+    @callback
+    def _handle_state_change(self, event):
+        new_state = event.data.get("new_state")
+        if new_state is None or new_state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
+            return
+        try:
+            self._attr_native_value = float(new_state.state) * self._calibration
+            self.async_write_ha_state()
+        except (ValueError, TypeError):
+            _LOGGER.warning(
+                "Non-numeric state from %s: %s", self._source_entity, new_state.state
+            )

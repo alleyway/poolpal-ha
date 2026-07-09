@@ -2,41 +2,34 @@
   "config": {
     "step": {
       "user": {
-        "title": "Select Manufacturer",
-        "description": "Choose a device manufacturer to filter by, or select 'All manufacturers' to see all devices.",
-        "data": {
-          "manufacturer": "Manufacturer"
-        }
-      },
-      "device": {
         "title": "Select Device",
-        "description": "Select the device to add a calibrated sensor to.",
+        "description": "Select a PoolPal device to add a calibrated water level sensor to.",
         "data": {
           "device": "Device"
         }
       },
       "configure": {
         "title": "Configure Calibration",
-        "description": "Set up the MQTT topic and calibration factor. Raw values from the topic will be multiplied by the calibration factor to produce a sensor value in cm.",
+        "description": "Choose the source entity ending in _value and set a calibration factor. The raw value will be multiplied by the factor to produce a water level in cm.",
         "data": {
-          "mqtt_topic": "MQTT Topic",
+          "source_entity": "Source Entity",
           "calibration_factor": "Calibration Factor",
           "name": "Sensor Name"
         },
         "data_description": {
-          "mqtt_topic": "The MQTT topic that publishes the raw numeric value",
+          "source_entity": "The entity on this device that provides the raw _value",
           "calibration_factor": "Multiplier applied to the raw value (calibrated = raw \u00d7 factor)",
           "name": "Friendly name for the calibrated sensor"
         }
       }
     },
     "error": {
-      "invalid_topic": "Could not receive data from this MQTT topic. Verify the topic is correct and the device is publishing.",
-      "unknown_device": "Selected device was not found in the device registry.",
-      "no_devices": "No devices found matching your criteria."
+      "invalid_state": "The selected entity does not have a valid numeric state.",
+      "unknown_device": "Selected device was not found in the device registry."
     },
     "abort": {
-      "no_devices": "No devices were found in the Home Assistant device registry."
+      "no_devices": "No PoolPal devices were found in the Home Assistant device registry.",
+      "no_entities": "No entities ending in _value were found on the selected device."
     }
   }
 }
