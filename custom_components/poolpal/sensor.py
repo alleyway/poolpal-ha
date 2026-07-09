@@ -34,6 +34,7 @@ class PoolPalSensor(SensorEntity):
     _attr_force_update = True
     _attr_native_unit_of_measurement = UNIT_CM
     _attr_device_class = DEVICE_CLASS_DISTANCE
+    _attr_suggested_display_precision = 1
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         self.hass = hass
