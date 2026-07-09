@@ -1,0 +1,13 @@
+{
+  "domain": "poolpal",
+  "name": "PoolPal",
+  "version": "0.1.0",
+  "codeowners": ["@mlake"],
+  "config_flow": true,
+  "dependencies": ["mqtt"],
+  "requirements": [],
+  "iot_class": "local_push",
+  "integration_type": "hub",
+  "documentation": "https://github.com/mlake/poolpal-ha",
+  "issue_tracker": "https://github.com/mlake/poolpal-ha/issues"
+}
