@@ -8,9 +8,12 @@ from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from .const import (
     DOMAIN,
     CONF_SOURCE_ENTITY,
-    CONF_CALIBRATION_FACTOR,
+    CONF_SUBTRACTOR,
+    CONF_DIVIDER,
     CONF_DEVICE_IDENTIFIERS,
     CONF_DEVICE_CONNECTIONS,
+    DEFAULT_SUBTRACTOR,
+    DEFAULT_DIVIDER,
     UNIT_CM,
     DEVICE_CLASS_DISTANCE,
 )
@@ -36,7 +39,6 @@ class PoolPalSensor(SensorEntity):
         self.hass = hass
         self._entry = entry
         self._source_entity = entry.data[CONF_SOURCE_ENTITY]
-        self._calibration = entry.data[CONF_CALIBRATION_FACTOR]
         self._attr_name = entry.data.get("name", "PoolPal Sensor")
         self._attr_unique_id = f"{DOMAIN}_{entry.entry_id}"
 
@@ -49,6 +51,18 @@ class PoolPalSensor(SensorEntity):
             device_info["connections"] = {tuple(c) for c in connections_raw}
         self._attr_device_info = device_info or None
 
+    def _get_subtractor(self) -> float:
+        return self._entry.options.get(
+            CONF_SUBTRACTOR,
+            self._entry.data.get(CONF_SUBTRACTOR, DEFAULT_SUBTRACTOR),
+        )
+
+    def _get_divider(self) -> float:
+        return self._entry.options.get(
+            CONF_DIVIDER,
+            self._entry.data.get(CONF_DIVIDER, DEFAULT_DIVIDER),
+        )
+
     async def async_added_to_hass(self) -> None:
         self.async_on_remove(
             async_track_state_change_event(
@@ -58,7 +72,8 @@ class PoolPalSensor(SensorEntity):
         state = self.hass.states.get(self._source_entity)
         if state is not None and state.state not in (STATE_UNAVAILABLE, STATE_UNKNOWN):
             try:
-                self._attr_native_value = float(state.state) * self._calibration
+                raw = float(state.state)
+                self._attr_native_value = (raw - self._get_subtractor()) / self._get_divider()
             except (ValueError, TypeError):
                 pass
 
@@ -68,7 +83,8 @@ class PoolPalSensor(SensorEntity):
         if new_state is None or new_state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
             return
         try:
-            self._attr_native_value = float(new_state.state) * self._calibration
+            raw = float(new_state.state)
+            self._attr_native_value = (raw - self._get_subtractor()) / self._get_divider()
             self.async_write_ha_state()
         except (ValueError, TypeError):
             _LOGGER.warning(

@@ -3,23 +3,25 @@
     "step": {
       "user": {
         "title": "Select Device",
-        "description": "Select a PoolPal device to add a calibrated water level sensor to.",
+        "description": "Select a PoolPal device to add a water level sensor to.",
         "data": {
           "device": "Device"
         }
       },
       "configure": {
-        "title": "Configure Calibration",
-        "description": "Choose the source entity ending in _value and set a calibration factor. The raw value will be multiplied by the factor to produce a water level in cm.",
+        "title": "Configure Sensor",
+        "description": "Choose the source entity ending in _value, then set the formula: cm = (raw - subtractor) \u00f7 divider.",
         "data": {
           "source_entity": "Source Entity",
-          "calibration_factor": "Calibration Factor",
+          "subtractor": "Subtractor",
+          "divider": "Divider",
           "name": "Sensor Name"
         },
         "data_description": {
           "source_entity": "The entity on this device that provides the raw _value",
-          "calibration_factor": "Multiplier applied to the raw value (calibrated = raw \u00d7 factor)",
-          "name": "Friendly name for the calibrated sensor"
+          "subtractor": "Subtracted from the raw value (raw - subtractor)",
+          "divider": "Divides the result ((raw - subtractor) \u00f7 divider)",
+          "name": "Friendly name for the water level sensor"
         }
       }
     },
@@ -30,6 +32,22 @@
     "abort": {
       "no_devices": "No PoolPal devices were found in the Home Assistant device registry.",
       "no_entities": "No entities ending in _value were found on the selected device."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure PoolPal Sensor",
+        "description": "Adjust the formula: cm = (raw - subtractor) \u00f7 divider.",
+        "data": {
+          "subtractor": "Subtractor",
+          "divider": "Divider"
+        },
+        "data_description": {
+          "subtractor": "Subtracted from the raw value (raw - subtractor)",
+          "divider": "Divides the result ((raw - subtractor) \u00f7 divider)"
+        }
+      }
     }
   }
 }

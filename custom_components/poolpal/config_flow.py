@@ -6,11 +6,13 @@ from .const import (
     DOMAIN,
     MANUFACTURER,
     CONF_SOURCE_ENTITY,
-    CONF_CALIBRATION_FACTOR,
+    CONF_SUBTRACTOR,
+    CONF_DIVIDER,
     CONF_DEVICE_IDENTIFIERS,
     CONF_DEVICE_CONNECTIONS,
     SOURCE_ENTITY_SUFFIX,
-    DEFAULT_CALIBRATION_FACTOR,
+    DEFAULT_SUBTRACTOR,
+    DEFAULT_DIVIDER,
 )
 
 
@@ -92,7 +94,8 @@ class PoolPalConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     title=self._device_name,
                     data={
                         CONF_SOURCE_ENTITY: source,
-                        CONF_CALIBRATION_FACTOR: user_input[CONF_CALIBRATION_FACTOR],
+                        CONF_SUBTRACTOR: user_input[CONF_SUBTRACTOR],
+                        CONF_DIVIDER: user_input[CONF_DIVIDER],
                         CONF_DEVICE_IDENTIFIERS: self._device_identifiers or [],
                         CONF_DEVICE_CONNECTIONS: self._device_connections or [],
                         "name": user_input["name"],
@@ -104,17 +107,63 @@ class PoolPalConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def _show_configure_form(self, entities, errors=None):
         entity_id = next(iter(entities))
         entity_name = entities[entity_id].split(".", 1)[-1] if "." in entities[entity_id] else entities[entity_id]
-        default_name = f"{entity_name} Calibrated"
+        default_name = f"{entity_name} Water Level"
         return self.async_show_form(
             step_id="configure",
             data_schema=vol.Schema(
                 {
                     vol.Required(CONF_SOURCE_ENTITY): vol.In(entities),
                     vol.Required(
-                        CONF_CALIBRATION_FACTOR, default=DEFAULT_CALIBRATION_FACTOR
+                        CONF_SUBTRACTOR, default=DEFAULT_SUBTRACTOR
+                    ): vol.Coerce(float),
+                    vol.Required(
+                        CONF_DIVIDER, default=DEFAULT_DIVIDER
                     ): vol.Coerce(float),
                     vol.Optional("name", default=default_name): str,
                 }
             ),
             errors=errors or {},
+        )
+
+    @staticmethod
+    async def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> config_entries.OptionsFlow:
+        return PoolPalOptionsFlow(config_entry)
+
+
+class PoolPalOptionsFlow(config_entries.OptionsFlow):
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        self._config_entry = config_entry
+
+    async def async_step_init(self, user_input=None):
+        errors = {}
+        if user_input is not None:
+            return self.async_create_entry(
+                title="",
+                data=user_input,
+            )
+
+        current_subtractor = self._config_entry.options.get(
+            CONF_SUBTRACTOR,
+            self._config_entry.data.get(CONF_SUBTRACTOR, DEFAULT_SUBTRACTOR),
+        )
+        current_divider = self._config_entry.options.get(
+            CONF_DIVIDER,
+            self._config_entry.data.get(CONF_DIVIDER, DEFAULT_DIVIDER),
+        )
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_SUBTRACTOR, default=current_subtractor
+                    ): vol.Coerce(float),
+                    vol.Required(
+                        CONF_DIVIDER, default=current_divider
+                    ): vol.Coerce(float),
+                }
+            ),
+            errors=errors,
         )
