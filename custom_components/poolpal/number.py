@@ -5,6 +5,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.helpers.entity import EntityCategory
+from homeassistant.helpers.restore_state import RestoreEntity
 from .const import (
     DOMAIN,
     CONF_SUBTRACTOR,
@@ -29,7 +30,7 @@ async def async_setup_entry(
     ])
 
 
-class PoolPalSubtractor(NumberEntity):
+class PoolPalSubtractor(NumberEntity, RestoreEntity):
     _attr_entity_category = EntityCategory.CONFIG
     _attr_icon = "mdi:minus"
     _attr_native_min_value = 0
@@ -73,7 +74,7 @@ class PoolPalSubtractor(NumberEntity):
         self.async_write_ha_state()
 
 
-class PoolPalDivider(NumberEntity):
+class PoolPalDivider(NumberEntity, RestoreEntity):
     _attr_entity_category = EntityCategory.CONFIG
     _attr_icon = "mdi:division"
     _attr_native_min_value = 0.01
