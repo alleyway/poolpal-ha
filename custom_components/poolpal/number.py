@@ -4,6 +4,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
+from homeassistant.helpers.entity import EntityCategory
 from .const import (
     DOMAIN,
     CONF_SUBTRACTOR,
@@ -29,6 +30,7 @@ async def async_setup_entry(
 
 
 class PoolPalSubtractor(NumberEntity):
+    _attr_entity_category = EntityCategory.CONFIG
     _attr_icon = "mdi:minus"
     _attr_native_min_value = 0
     _attr_native_max_value = 10000
@@ -72,6 +74,7 @@ class PoolPalSubtractor(NumberEntity):
 
 
 class PoolPalDivider(NumberEntity):
+    _attr_entity_category = EntityCategory.CONFIG
     _attr_icon = "mdi:division"
     _attr_native_min_value = 0.01
     _attr_native_max_value = 1000
