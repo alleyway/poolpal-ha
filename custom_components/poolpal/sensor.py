@@ -52,42 +52,45 @@ class PoolPalSensor(SensorEntity):
             device_info["connections"] = {tuple(c) for c in connections_raw}
         self._attr_device_info = device_info or None
 
+    def _get_data(self, key: str, default: float) -> float:
+        return self.hass.data.get(DOMAIN, {}).get(
+            self._entry.entry_id, {}
+        ).get(key, default)
+
     def _get_subtractor(self) -> float:
-        return self._entry.options.get(
-            CONF_SUBTRACTOR,
-            self._entry.data.get(CONF_SUBTRACTOR, DEFAULT_SUBTRACTOR),
-        )
+        return self._get_data(CONF_SUBTRACTOR, DEFAULT_SUBTRACTOR)
 
     def _get_divider(self) -> float:
-        return self._entry.options.get(
-            CONF_DIVIDER,
-            self._entry.data.get(CONF_DIVIDER, DEFAULT_DIVIDER),
-        )
+        return self._get_data(CONF_DIVIDER, DEFAULT_DIVIDER)
 
     async def async_added_to_hass(self) -> None:
+        entity_ids = [self._source_entity]
+        data = self.hass.data.get(DOMAIN, {}).get(self._entry.entry_id, {})
+        for key in ("subtractor_entity_id", "divider_entity_id"):
+            if key in data:
+                entity_ids.append(data[key])
+
         self.async_on_remove(
             async_track_state_change_event(
-                self.hass, [self._source_entity], self._handle_state_change
+                self.hass, entity_ids, self._handle_state_change
             )
         )
-        state = self.hass.states.get(self._source_entity)
-        if state is not None and state.state not in (STATE_UNAVAILABLE, STATE_UNKNOWN):
-            try:
-                raw = float(state.state)
-                self._attr_native_value = (raw - self._get_subtractor()) / self._get_divider()
-            except (ValueError, TypeError):
-                pass
+
+        self._recalculate()
 
     @callback
     def _handle_state_change(self, event):
-        new_state = event.data.get("new_state")
-        if new_state is None or new_state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
+        self._recalculate()
+
+    def _recalculate(self):
+        state = self.hass.states.get(self._source_entity)
+        if state is None or state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
             return
         try:
-            raw = float(new_state.state)
+            raw = float(state.state)
             self._attr_native_value = (raw - self._get_subtractor()) / self._get_divider()
             self.async_write_ha_state()
         except (ValueError, TypeError):
             _LOGGER.warning(
-                "Non-numeric state from %s: %s", self._source_entity, new_state.state
+                "Non-numeric state from %s: %s", self._source_entity, state.state
             )
