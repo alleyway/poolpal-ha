@@ -35,7 +35,7 @@ class PoolPalSubtractor(NumberEntity, RestoreEntity):
     _attr_icon = "mdi:minus"
     _attr_native_min_value = 0
     _attr_native_max_value = 10000
-    _attr_native_step = 1
+    _attr_native_step = 0.5
     _attr_mode = NumberMode.BOX
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
@@ -77,8 +77,8 @@ class PoolPalSubtractor(NumberEntity, RestoreEntity):
 class PoolPalDivider(NumberEntity, RestoreEntity):
     _attr_entity_category = EntityCategory.CONFIG
     _attr_icon = "mdi:division"
-    _attr_native_min_value = 0.01
-    _attr_native_max_value = 1000
+    _attr_native_min_value = 16
+    _attr_native_max_value = 23
     _attr_native_step = 0.01
     _attr_mode = NumberMode.BOX
 
