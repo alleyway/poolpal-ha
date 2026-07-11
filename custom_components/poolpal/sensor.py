@@ -8,12 +8,14 @@ from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from .const import (
     DOMAIN,
     CONF_SOURCE_ENTITY,
-    CONF_SUBTRACTOR,
-    CONF_DIVIDER,
+    CONF_OFFSET,
+    CONF_LINEAR_COEFFICIENT,
+    CONF_QUAD_COEFFICIENT,
     CONF_DEVICE_IDENTIFIERS,
     CONF_DEVICE_CONNECTIONS,
-    DEFAULT_SUBTRACTOR,
-    DEFAULT_DIVIDER,
+    DEFAULT_OFFSET,
+    DEFAULT_LINEAR_COEFFICIENT,
+    DEFAULT_QUAD_COEFFICIENT,
     UNIT_CM,
     DEVICE_CLASS_DISTANCE,
 )
@@ -57,16 +59,19 @@ class PoolPalSensor(SensorEntity):
             self._entry.entry_id, {}
         ).get(key, default)
 
-    def _get_subtractor(self) -> float:
-        return self._get_data(CONF_SUBTRACTOR, DEFAULT_SUBTRACTOR)
+    def _get_offset(self) -> float:
+        return self._get_data(CONF_OFFSET, DEFAULT_OFFSET)
 
-    def _get_divider(self) -> float:
-        return self._get_data(CONF_DIVIDER, DEFAULT_DIVIDER)
+    def _get_linear_coefficient(self) -> float:
+        return self._get_data(CONF_LINEAR_COEFFICIENT, DEFAULT_LINEAR_COEFFICIENT)
+
+    def _get_quad_coefficient(self) -> float:
+        return self._get_data(CONF_QUAD_COEFFICIENT, DEFAULT_QUAD_COEFFICIENT)
 
     async def async_added_to_hass(self) -> None:
         entity_ids = [self._source_entity]
         data = self.hass.data.get(DOMAIN, {}).get(self._entry.entry_id, {})
-        for key in ("subtractor_entity_id", "divider_entity_id"):
+        for key in ("offset_entity_id", "linear_coefficient_entity_id", "quad_coefficient_entity_id"):
             if key in data:
                 entity_ids.append(data[key])
 
@@ -88,7 +93,10 @@ class PoolPalSensor(SensorEntity):
             return
         try:
             raw = float(state.state)
-            self._attr_native_value = (raw - self._get_subtractor()) / self._get_divider()
+            a = self._get_quad_coefficient()
+            b = self._get_linear_coefficient()
+            c = self._get_offset()
+            self._attr_native_value = a * raw * raw + b * raw + c
             self.async_write_ha_state()
         except (ValueError, TypeError):
             _LOGGER.warning(

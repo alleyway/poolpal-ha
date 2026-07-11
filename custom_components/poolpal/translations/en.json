@@ -10,17 +10,19 @@
       },
       "configure": {
         "title": "Configure Sensor",
-        "description": "Choose the source entity ending in _value, then set the formula: cm = (raw - subtractor) \u00f7 divider.",
+        "description": "Choose the source entity ending in _value, then set the formula: cm = a\u00b7raw\u00b2 + b\u00b7raw + c.",
         "data": {
           "source_entity": "Source Entity",
-          "subtractor": "Subtractor",
-          "divider": "Divider",
+          "offset": "Offset (c)",
+          "linear_coefficient": "Linear Coefficient (b)",
+          "quad_coefficient": "Quadratic Coefficient (a)",
           "name": "Sensor Name"
         },
         "data_description": {
           "source_entity": "The entity on this device that provides the raw _value",
-          "subtractor": "Subtracted from the raw value (raw - subtractor)",
-          "divider": "Divides the result ((raw - subtractor) \u00f7 divider)",
+          "offset": "Constant term (c) in a\u00b7raw\u00b2 + b\u00b7raw + c",
+          "linear_coefficient": "Linear coefficient (b) in a\u00b7raw\u00b2 + b\u00b7raw + c",
+          "quad_coefficient": "Quadratic coefficient (a) in a\u00b7raw\u00b2 + b\u00b7raw + c",
           "name": "Friendly name for the water level sensor"
         }
       }
@@ -38,14 +40,16 @@
     "step": {
       "init": {
         "title": "Configure PoolPal Sensor",
-        "description": "Adjust the formula: cm = (raw - subtractor) \u00f7 divider.",
+        "description": "Adjust the formula: cm = a\u00b7raw\u00b2 + b\u00b7raw + c.",
         "data": {
-          "subtractor": "Subtractor",
-          "divider": "Divider"
+          "offset": "Offset (c)",
+          "linear_coefficient": "Linear Coefficient (b)",
+          "quad_coefficient": "Quadratic Coefficient (a)"
         },
         "data_description": {
-          "subtractor": "Subtracted from the raw value (raw - subtractor)",
-          "divider": "Divides the result ((raw - subtractor) \u00f7 divider)"
+          "offset": "Constant term (c) in a\u00b7raw\u00b2 + b\u00b7raw + c",
+          "linear_coefficient": "Linear coefficient (b) in a\u00b7raw\u00b2 + b\u00b7raw + c",
+          "quad_coefficient": "Quadratic coefficient (a) in a\u00b7raw\u00b2 + b\u00b7raw + c"
         }
       }
     }
