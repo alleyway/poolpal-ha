@@ -8,11 +8,17 @@ from .const import (
     CONF_SOURCE_ENTITY,
     CONF_INTERCEPT,
     CONF_SLOPE,
+    CONF_RAW_EMPTY,
+    CONF_GIVEN_LEVEL,
+    CONF_RAW_GIVEN,
     CONF_DEVICE_IDENTIFIERS,
     CONF_DEVICE_CONNECTIONS,
     SOURCE_ENTITY_SUFFIX,
     DEFAULT_INTERCEPT,
     DEFAULT_SLOPE,
+    DEFAULT_RAW_EMPTY,
+    DEFAULT_GIVEN_LEVEL,
+    DEFAULT_RAW_GIVEN,
 )
 
 
@@ -96,6 +102,9 @@ class PoolPalConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_SOURCE_ENTITY: source,
                         CONF_INTERCEPT: user_input[CONF_INTERCEPT],
                         CONF_SLOPE: user_input[CONF_SLOPE],
+                        CONF_RAW_EMPTY: user_input[CONF_RAW_EMPTY],
+                        CONF_GIVEN_LEVEL: user_input[CONF_GIVEN_LEVEL],
+                        CONF_RAW_GIVEN: user_input[CONF_RAW_GIVEN],
                         CONF_DEVICE_IDENTIFIERS: self._device_identifiers or [],
                         CONF_DEVICE_CONNECTIONS: self._device_connections or [],
                         "name": user_input["name"],
@@ -113,6 +122,15 @@ class PoolPalConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     vol.Required(CONF_SOURCE_ENTITY): vol.In(entities),
+                    vol.Required(
+                        CONF_RAW_EMPTY, default=DEFAULT_RAW_EMPTY
+                    ): vol.Coerce(float),
+                    vol.Required(
+                        CONF_GIVEN_LEVEL, default=DEFAULT_GIVEN_LEVEL
+                    ): vol.Coerce(float),
+                    vol.Required(
+                        CONF_RAW_GIVEN, default=DEFAULT_RAW_GIVEN
+                    ): vol.Coerce(float),
                     vol.Required(
                         CONF_INTERCEPT, default=DEFAULT_INTERCEPT
                     ): vol.Coerce(float),
@@ -152,11 +170,32 @@ class PoolPalOptionsFlow(config_entries.OptionsFlow):
             CONF_SLOPE,
             self._config_entry.data.get(CONF_SLOPE, DEFAULT_SLOPE),
         )
+        current_raw_empty = self._config_entry.options.get(
+            CONF_RAW_EMPTY,
+            self._config_entry.data.get(CONF_RAW_EMPTY, DEFAULT_RAW_EMPTY),
+        )
+        current_given_level = self._config_entry.options.get(
+            CONF_GIVEN_LEVEL,
+            self._config_entry.data.get(CONF_GIVEN_LEVEL, DEFAULT_GIVEN_LEVEL),
+        )
+        current_raw_given = self._config_entry.options.get(
+            CONF_RAW_GIVEN,
+            self._config_entry.data.get(CONF_RAW_GIVEN, DEFAULT_RAW_GIVEN),
+        )
 
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
                 {
+                    vol.Required(
+                        CONF_RAW_EMPTY, default=current_raw_empty
+                    ): vol.Coerce(float),
+                    vol.Required(
+                        CONF_GIVEN_LEVEL, default=current_given_level
+                    ): vol.Coerce(float),
+                    vol.Required(
+                        CONF_RAW_GIVEN, default=current_raw_given
+                    ): vol.Coerce(float),
                     vol.Required(
                         CONF_INTERCEPT, default=current_intercept
                     ): vol.Coerce(float),

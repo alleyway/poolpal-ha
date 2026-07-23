@@ -10,17 +10,23 @@
       },
       "configure": {
         "title": "Configure Sensor",
-        "description": "Choose the source entity ending in _value, then set the formula: cm = slope \u00d7 raw + intercept.",
+        "description": "Choose the source entity ending in _value, then set two-point calibration.",
         "data": {
           "source_entity": "Source Entity",
+          "raw_empty": "Raw Capacitance (Empty)",
+          "given_level": "Given Level (cm)",
+          "raw_given": "Raw Capacitance @ Given Level",
           "intercept": "Intercept",
           "slope": "Slope",
           "name": "Sensor Name"
         },
         "data_description": {
           "source_entity": "The entity on this device that provides the raw _value",
-          "intercept": "Constant offset added after scaling (cm = slope \u00d7 raw + intercept)",
-          "slope": "Multiplier applied to the raw value (cm = slope \u00d7 raw + intercept)",
+          "raw_empty": "Raw capacitance reading when the pool is empty",
+          "given_level": "Known water level in cm for calibration",
+          "raw_given": "Raw capacitance reading at the given level",
+          "intercept": "Constant offset (cm = slope \u00d7 raw - intercept)",
+          "slope": "Multiplier applied to the raw value (cm = slope \u00d7 raw - intercept)",
           "name": "Friendly name for the water level sensor"
         }
       }
@@ -38,14 +44,20 @@
     "step": {
       "init": {
         "title": "Configure PoolPal Sensor",
-        "description": "Adjust the formula: cm = slope \u00d7 raw + intercept.",
+        "description": "Adjust two-point calibration values.",
         "data": {
+          "raw_empty": "Raw Capacitance (Empty)",
+          "given_level": "Given Level (cm)",
+          "raw_given": "Raw Capacitance @ Given Level",
           "intercept": "Intercept",
           "slope": "Slope"
         },
         "data_description": {
-          "intercept": "Constant offset added after scaling (cm = slope \u00d7 raw + intercept)",
-          "slope": "Multiplier applied to the raw value (cm = slope \u00d7 raw + intercept)"
+          "raw_empty": "Raw capacitance reading when the pool is empty",
+          "given_level": "Known water level in cm for calibration",
+          "raw_given": "Raw capacitance reading at the given level",
+          "intercept": "Constant offset (cm = slope \u00d7 raw - intercept)",
+          "slope": "Multiplier applied to the raw value (cm = slope \u00d7 raw - intercept)"
         }
       }
     }
