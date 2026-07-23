@@ -90,7 +90,7 @@ class PoolPalSensor(SensorEntity):
             raw = float(state.state)
             slope = self._get_slope()
             intercept = self._get_intercept()
-            self._attr_native_value = slope * raw + intercept
+            self._attr_native_value = slope * raw - intercept
             self.async_write_ha_state()
         except (ValueError, TypeError):
             _LOGGER.warning(

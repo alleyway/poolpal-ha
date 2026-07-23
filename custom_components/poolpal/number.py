@@ -33,9 +33,9 @@ async def async_setup_entry(
 class PoolPalIntercept(NumberEntity, RestoreEntity):
     _attr_entity_category = EntityCategory.CONFIG
     _attr_icon = "mdi:counter"
-    _attr_native_min_value = -10000
+    _attr_native_min_value = 0
     _attr_native_max_value = 10000
-    _attr_native_step = 1
+    _attr_native_step = 0.01
     _attr_mode = NumberMode.BOX
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
@@ -77,9 +77,9 @@ class PoolPalIntercept(NumberEntity, RestoreEntity):
 class PoolPalSlope(NumberEntity, RestoreEntity):
     _attr_entity_category = EntityCategory.CONFIG
     _attr_icon = "mdi:alpha-b"
-    _attr_native_min_value = -1000
+    _attr_native_min_value = 0
     _attr_native_max_value = 1000
-    _attr_native_step = 0.000001
+    _attr_native_step = 0.0000001
     _attr_mode = NumberMode.BOX
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
