@@ -8,14 +8,12 @@ from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from .const import (
     DOMAIN,
     CONF_SOURCE_ENTITY,
-    CONF_OFFSET,
-    CONF_LINEAR_COEFFICIENT,
-    CONF_QUAD_COEFFICIENT,
+    CONF_INTERCEPT,
+    CONF_SLOPE,
     CONF_DEVICE_IDENTIFIERS,
     CONF_DEVICE_CONNECTIONS,
-    DEFAULT_OFFSET,
-    DEFAULT_LINEAR_COEFFICIENT,
-    DEFAULT_QUAD_COEFFICIENT,
+    DEFAULT_INTERCEPT,
+    DEFAULT_SLOPE,
     UNIT_CM,
     DEVICE_CLASS_DISTANCE,
 )
@@ -59,19 +57,16 @@ class PoolPalSensor(SensorEntity):
             self._entry.entry_id, {}
         ).get(key, default)
 
-    def _get_offset(self) -> float:
-        return self._get_data(CONF_OFFSET, DEFAULT_OFFSET)
+    def _get_intercept(self) -> float:
+        return self._get_data(CONF_INTERCEPT, DEFAULT_INTERCEPT)
 
-    def _get_linear_coefficient(self) -> float:
-        return self._get_data(CONF_LINEAR_COEFFICIENT, DEFAULT_LINEAR_COEFFICIENT)
-
-    def _get_quad_coefficient(self) -> float:
-        return self._get_data(CONF_QUAD_COEFFICIENT, DEFAULT_QUAD_COEFFICIENT)
+    def _get_slope(self) -> float:
+        return self._get_data(CONF_SLOPE, DEFAULT_SLOPE)
 
     async def async_added_to_hass(self) -> None:
         entity_ids = [self._source_entity]
         data = self.hass.data.get(DOMAIN, {}).get(self._entry.entry_id, {})
-        for key in ("offset_entity_id", "linear_coefficient_entity_id", "quad_coefficient_entity_id"):
+        for key in ("intercept_entity_id", "slope_entity_id"):
             if key in data:
                 entity_ids.append(data[key])
 
@@ -93,10 +88,9 @@ class PoolPalSensor(SensorEntity):
             return
         try:
             raw = float(state.state)
-            a = self._get_quad_coefficient()
-            b = self._get_linear_coefficient()
-            c = self._get_offset()
-            self._attr_native_value = a * raw * raw + b * raw + c
+            slope = self._get_slope()
+            intercept = self._get_intercept()
+            self._attr_native_value = slope * raw + intercept
             self.async_write_ha_state()
         except (ValueError, TypeError):
             _LOGGER.warning(

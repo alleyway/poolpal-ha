@@ -6,15 +6,13 @@ from .const import (
     DOMAIN,
     MANUFACTURER,
     CONF_SOURCE_ENTITY,
-    CONF_OFFSET,
-    CONF_LINEAR_COEFFICIENT,
-    CONF_QUAD_COEFFICIENT,
+    CONF_INTERCEPT,
+    CONF_SLOPE,
     CONF_DEVICE_IDENTIFIERS,
     CONF_DEVICE_CONNECTIONS,
     SOURCE_ENTITY_SUFFIX,
-    DEFAULT_OFFSET,
-    DEFAULT_LINEAR_COEFFICIENT,
-    DEFAULT_QUAD_COEFFICIENT,
+    DEFAULT_INTERCEPT,
+    DEFAULT_SLOPE,
 )
 
 
@@ -96,9 +94,8 @@ class PoolPalConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     title=self._device_name,
                     data={
                         CONF_SOURCE_ENTITY: source,
-                        CONF_OFFSET: user_input[CONF_OFFSET],
-                        CONF_LINEAR_COEFFICIENT: user_input[CONF_LINEAR_COEFFICIENT],
-                        CONF_QUAD_COEFFICIENT: user_input[CONF_QUAD_COEFFICIENT],
+                        CONF_INTERCEPT: user_input[CONF_INTERCEPT],
+                        CONF_SLOPE: user_input[CONF_SLOPE],
                         CONF_DEVICE_IDENTIFIERS: self._device_identifiers or [],
                         CONF_DEVICE_CONNECTIONS: self._device_connections or [],
                         "name": user_input["name"],
@@ -117,13 +114,10 @@ class PoolPalConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 {
                     vol.Required(CONF_SOURCE_ENTITY): vol.In(entities),
                     vol.Required(
-                        CONF_OFFSET, default=DEFAULT_OFFSET
+                        CONF_INTERCEPT, default=DEFAULT_INTERCEPT
                     ): vol.Coerce(float),
                     vol.Required(
-                        CONF_LINEAR_COEFFICIENT, default=DEFAULT_LINEAR_COEFFICIENT
-                    ): vol.Coerce(float),
-                    vol.Required(
-                        CONF_QUAD_COEFFICIENT, default=DEFAULT_QUAD_COEFFICIENT
+                        CONF_SLOPE, default=DEFAULT_SLOPE
                     ): vol.Coerce(float),
                     vol.Optional("name", default=default_name): str,
                 }
@@ -150,17 +144,13 @@ class PoolPalOptionsFlow(config_entries.OptionsFlow):
                 data=user_input,
             )
 
-        current_offset = self._config_entry.options.get(
-            CONF_OFFSET,
-            self._config_entry.data.get(CONF_OFFSET, DEFAULT_OFFSET),
+        current_intercept = self._config_entry.options.get(
+            CONF_INTERCEPT,
+            self._config_entry.data.get(CONF_INTERCEPT, DEFAULT_INTERCEPT),
         )
-        current_linear = self._config_entry.options.get(
-            CONF_LINEAR_COEFFICIENT,
-            self._config_entry.data.get(CONF_LINEAR_COEFFICIENT, DEFAULT_LINEAR_COEFFICIENT),
-        )
-        current_quad = self._config_entry.options.get(
-            CONF_QUAD_COEFFICIENT,
-            self._config_entry.data.get(CONF_QUAD_COEFFICIENT, DEFAULT_QUAD_COEFFICIENT),
+        current_slope = self._config_entry.options.get(
+            CONF_SLOPE,
+            self._config_entry.data.get(CONF_SLOPE, DEFAULT_SLOPE),
         )
 
         return self.async_show_form(
@@ -168,13 +158,10 @@ class PoolPalOptionsFlow(config_entries.OptionsFlow):
             data_schema=vol.Schema(
                 {
                     vol.Required(
-                        CONF_OFFSET, default=current_offset
+                        CONF_INTERCEPT, default=current_intercept
                     ): vol.Coerce(float),
                     vol.Required(
-                        CONF_LINEAR_COEFFICIENT, default=current_linear
-                    ): vol.Coerce(float),
-                    vol.Required(
-                        CONF_QUAD_COEFFICIENT, default=current_quad
+                        CONF_SLOPE, default=current_slope
                     ): vol.Coerce(float),
                 }
             ),

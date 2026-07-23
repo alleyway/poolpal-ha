@@ -10,19 +10,17 @@
       },
       "configure": {
         "title": "Configure Sensor",
-        "description": "Choose the source entity ending in _value, then set the formula: cm = a\u00b7raw\u00b2 + b\u00b7raw + c.",
+        "description": "Choose the source entity ending in _value, then set the formula: cm = slope \u00d7 raw + intercept.",
         "data": {
           "source_entity": "Source Entity",
-          "offset": "Offset (c)",
-          "linear_coefficient": "Linear Coefficient (b)",
-          "quad_coefficient": "Quadratic Coefficient (a)",
+          "intercept": "Intercept",
+          "slope": "Slope",
           "name": "Sensor Name"
         },
         "data_description": {
           "source_entity": "The entity on this device that provides the raw _value",
-          "offset": "Constant term (c) in a\u00b7raw\u00b2 + b\u00b7raw + c",
-          "linear_coefficient": "Linear coefficient (b) in a\u00b7raw\u00b2 + b\u00b7raw + c",
-          "quad_coefficient": "Quadratic coefficient (a) in a\u00b7raw\u00b2 + b\u00b7raw + c",
+          "intercept": "Constant offset added after scaling (cm = slope \u00d7 raw + intercept)",
+          "slope": "Multiplier applied to the raw value (cm = slope \u00d7 raw + intercept)",
           "name": "Friendly name for the water level sensor"
         }
       }
@@ -40,16 +38,14 @@
     "step": {
       "init": {
         "title": "Configure PoolPal Sensor",
-        "description": "Adjust the formula: cm = a\u00b7raw\u00b2 + b\u00b7raw + c.",
+        "description": "Adjust the formula: cm = slope \u00d7 raw + intercept.",
         "data": {
-          "offset": "Offset (c)",
-          "linear_coefficient": "Linear Coefficient (b)",
-          "quad_coefficient": "Quadratic Coefficient (a)"
+          "intercept": "Intercept",
+          "slope": "Slope"
         },
         "data_description": {
-          "offset": "Constant term (c) in a\u00b7raw\u00b2 + b\u00b7raw + c",
-          "linear_coefficient": "Linear coefficient (b) in a\u00b7raw\u00b2 + b\u00b7raw + c",
-          "quad_coefficient": "Quadratic coefficient (a) in a\u00b7raw\u00b2 + b\u00b7raw + c"
+          "intercept": "Constant offset added after scaling (cm = slope \u00d7 raw + intercept)",
+          "slope": "Multiplier applied to the raw value (cm = slope \u00d7 raw + intercept)"
         }
       }
     }
