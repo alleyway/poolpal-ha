@@ -123,14 +123,14 @@ class PoolPalConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 {
                     vol.Required(CONF_SOURCE_ENTITY): vol.In(entities),
                     vol.Required(
-                        CONF_RAW_EMPTY, default=DEFAULT_RAW_EMPTY
-                    ): vol.Coerce(float),
+                        CONF_RAW_EMPTY, default=int(DEFAULT_RAW_EMPTY)
+                    ): vol.Coerce(int),
                     vol.Required(
                         CONF_GIVEN_LEVEL, default=DEFAULT_GIVEN_LEVEL
                     ): vol.Coerce(float),
                     vol.Required(
-                        CONF_RAW_GIVEN, default=DEFAULT_RAW_GIVEN
-                    ): vol.Coerce(float),
+                        CONF_RAW_GIVEN, default=int(DEFAULT_RAW_GIVEN)
+                    ): vol.Coerce(int),
                     vol.Required(
                         CONF_INTERCEPT, default=DEFAULT_INTERCEPT
                     ): vol.Coerce(float),
@@ -188,14 +188,14 @@ class PoolPalOptionsFlow(config_entries.OptionsFlow):
             data_schema=vol.Schema(
                 {
                     vol.Required(
-                        CONF_RAW_EMPTY, default=current_raw_empty
-                    ): vol.Coerce(float),
+                        CONF_RAW_EMPTY, default=int(current_raw_empty)
+                    ): vol.Coerce(int),
                     vol.Required(
                         CONF_GIVEN_LEVEL, default=current_given_level
                     ): vol.Coerce(float),
                     vol.Required(
-                        CONF_RAW_GIVEN, default=current_raw_given
-                    ): vol.Coerce(float),
+                        CONF_RAW_GIVEN, default=int(current_raw_given)
+                    ): vol.Coerce(int),
                     vol.Required(
                         CONF_INTERCEPT, default=current_intercept
                     ): vol.Coerce(float),
