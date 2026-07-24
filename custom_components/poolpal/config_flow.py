@@ -6,17 +6,15 @@ from .const import (
     DOMAIN,
     MANUFACTURER,
     CONF_SOURCE_ENTITY,
-    CONF_INTERCEPT,
-    CONF_SLOPE,
     CONF_RAW_EMPTY,
+    CONF_EMPTY_CM_LEVEL,
     CONF_GIVEN_LEVEL,
     CONF_RAW_GIVEN,
     CONF_DEVICE_IDENTIFIERS,
     CONF_DEVICE_CONNECTIONS,
     SOURCE_ENTITY_SUFFIX,
-    DEFAULT_INTERCEPT,
-    DEFAULT_SLOPE,
     DEFAULT_RAW_EMPTY,
+    DEFAULT_EMPTY_CM_LEVEL,
     DEFAULT_GIVEN_LEVEL,
     DEFAULT_RAW_GIVEN,
 )
@@ -100,9 +98,8 @@ class PoolPalConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     title=self._device_name,
                     data={
                         CONF_SOURCE_ENTITY: source,
-                        CONF_INTERCEPT: user_input[CONF_INTERCEPT],
-                        CONF_SLOPE: user_input[CONF_SLOPE],
                         CONF_RAW_EMPTY: user_input[CONF_RAW_EMPTY],
+                        CONF_EMPTY_CM_LEVEL: user_input[CONF_EMPTY_CM_LEVEL],
                         CONF_GIVEN_LEVEL: user_input[CONF_GIVEN_LEVEL],
                         CONF_RAW_GIVEN: user_input[CONF_RAW_GIVEN],
                         CONF_DEVICE_IDENTIFIERS: self._device_identifiers or [],
@@ -126,17 +123,14 @@ class PoolPalConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_RAW_EMPTY, default=int(DEFAULT_RAW_EMPTY)
                     ): vol.Coerce(int),
                     vol.Required(
+                        CONF_EMPTY_CM_LEVEL, default=DEFAULT_EMPTY_CM_LEVEL
+                    ): vol.Coerce(float),
+                    vol.Required(
                         CONF_GIVEN_LEVEL, default=DEFAULT_GIVEN_LEVEL
                     ): vol.Coerce(float),
                     vol.Required(
                         CONF_RAW_GIVEN, default=int(DEFAULT_RAW_GIVEN)
                     ): vol.Coerce(int),
-                    vol.Required(
-                        CONF_INTERCEPT, default=DEFAULT_INTERCEPT
-                    ): vol.Coerce(float),
-                    vol.Required(
-                        CONF_SLOPE, default=DEFAULT_SLOPE
-                    ): vol.Coerce(float),
                     vol.Optional("name", default=default_name): str,
                 }
             ),
@@ -162,17 +156,13 @@ class PoolPalOptionsFlow(config_entries.OptionsFlow):
                 data=user_input,
             )
 
-        current_intercept = self._config_entry.options.get(
-            CONF_INTERCEPT,
-            self._config_entry.data.get(CONF_INTERCEPT, DEFAULT_INTERCEPT),
-        )
-        current_slope = self._config_entry.options.get(
-            CONF_SLOPE,
-            self._config_entry.data.get(CONF_SLOPE, DEFAULT_SLOPE),
-        )
         current_raw_empty = self._config_entry.options.get(
             CONF_RAW_EMPTY,
             self._config_entry.data.get(CONF_RAW_EMPTY, DEFAULT_RAW_EMPTY),
+        )
+        current_empty_cm_level = self._config_entry.options.get(
+            CONF_EMPTY_CM_LEVEL,
+            self._config_entry.data.get(CONF_EMPTY_CM_LEVEL, DEFAULT_EMPTY_CM_LEVEL),
         )
         current_given_level = self._config_entry.options.get(
             CONF_GIVEN_LEVEL,
@@ -191,17 +181,14 @@ class PoolPalOptionsFlow(config_entries.OptionsFlow):
                         CONF_RAW_EMPTY, default=int(current_raw_empty)
                     ): vol.Coerce(int),
                     vol.Required(
+                        CONF_EMPTY_CM_LEVEL, default=current_empty_cm_level
+                    ): vol.Coerce(float),
+                    vol.Required(
                         CONF_GIVEN_LEVEL, default=current_given_level
                     ): vol.Coerce(float),
                     vol.Required(
                         CONF_RAW_GIVEN, default=int(current_raw_given)
                     ): vol.Coerce(int),
-                    vol.Required(
-                        CONF_INTERCEPT, default=current_intercept
-                    ): vol.Coerce(float),
-                    vol.Required(
-                        CONF_SLOPE, default=current_slope
-                    ): vol.Coerce(float),
                 }
             ),
             errors=errors,

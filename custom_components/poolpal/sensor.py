@@ -8,12 +8,12 @@ from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from .const import (
     DOMAIN,
     CONF_SOURCE_ENTITY,
-    CONF_INTERCEPT,
-    CONF_SLOPE,
+    CONF_RAW_GIVEN,
+    CONF_GIVEN_LEVEL,
     CONF_DEVICE_IDENTIFIERS,
     CONF_DEVICE_CONNECTIONS,
-    DEFAULT_INTERCEPT,
-    DEFAULT_SLOPE,
+    DEFAULT_RAW_GIVEN,
+    DEFAULT_GIVEN_LEVEL,
     UNIT_CM,
     DEVICE_CLASS_DISTANCE,
 )
@@ -57,25 +57,12 @@ class PoolPalSensor(SensorEntity):
             self._entry.entry_id, {}
         ).get(key, default)
 
-    def _get_intercept(self) -> float:
-        return self._get_data(CONF_INTERCEPT, DEFAULT_INTERCEPT)
-
-    def _get_slope(self) -> float:
-        return self._get_data(CONF_SLOPE, DEFAULT_SLOPE)
-
     async def async_added_to_hass(self) -> None:
-        entity_ids = [self._source_entity]
-        data = self.hass.data.get(DOMAIN, {}).get(self._entry.entry_id, {})
-        for key in ("intercept_entity_id", "slope_entity_id"):
-            if key in data:
-                entity_ids.append(data[key])
-
         self.async_on_remove(
             async_track_state_change_event(
-                self.hass, entity_ids, self._handle_state_change
+                self.hass, [self._source_entity], self._handle_state_change
             )
         )
-
         self._recalculate()
 
     @callback
@@ -88,9 +75,13 @@ class PoolPalSensor(SensorEntity):
             return
         try:
             raw = float(state.state)
-            slope = self._get_slope()
-            intercept = self._get_intercept()
-            self._attr_native_value = slope * raw - intercept
+            empty_cm = self._get_data(CONF_EMPTY_CM_LEVEL, DEFAULT_EMPTY_CM_LEVEL)
+            raw_empty = self._get_data(CONF_RAW_EMPTY, DEFAULT_RAW_EMPTY)
+
+            given_level = self._get_data(CONF_GIVEN_LEVEL, DEFAULT_GIVEN_LEVEL)
+            raw_given = self._get_data(CONF_RAW_GIVEN, DEFAULT_RAW_GIVEN)
+
+            self._attr_native_value = empty_cm + ((given_level-empty_cm)/(raw_given-raw_empty)) * (raw - raw_empty)
             self.async_write_ha_state()
         except (ValueError, TypeError):
             _LOGGER.warning(
