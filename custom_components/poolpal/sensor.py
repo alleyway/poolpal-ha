@@ -69,11 +69,21 @@ class PoolPalSensor(SensorEntity):
                 self.hass, [self._source_entity], self._handle_state_change
             )
         )
+        self.async_on_remove(
+            self.hass.bus.async_listen(
+                f"{DOMAIN}_calibration_changed", self._on_calibration_changed
+            )
+        )
         self._recalculate()
 
     @callback
     def _handle_state_change(self, event):
         self._recalculate()
+
+    @callback
+    def _on_calibration_changed(self, event):
+        if event.data.get("entry_id") == self._entry.entry_id:
+            self._recalculate()
 
     def _recalculate(self):
         state = self.hass.states.get(self._source_entity)

@@ -82,6 +82,7 @@ class PoolPalRawEmpty(_CalibrationEntity):
         self._attr_native_value = value
         self.hass.data[DOMAIN][self._entry.entry_id][CONF_RAW_EMPTY] = value
         self.async_write_ha_state()
+        self.hass.bus.fire(f"{DOMAIN}_calibration_changed", {"entry_id": self._entry.entry_id})
 
 
 class PoolPalEmptyCmLevel(_CalibrationEntity):
@@ -112,6 +113,7 @@ class PoolPalEmptyCmLevel(_CalibrationEntity):
         self._attr_native_value = value
         self.hass.data[DOMAIN][self._entry.entry_id][CONF_EMPTY_CM_LEVEL] = value
         self.async_write_ha_state()
+        self.hass.bus.fire(f"{DOMAIN}_calibration_changed", {"entry_id": self._entry.entry_id})
 
 
 class PoolPalGivenLevel(_CalibrationEntity):
@@ -142,6 +144,7 @@ class PoolPalGivenLevel(_CalibrationEntity):
         self._attr_native_value = value
         self.hass.data[DOMAIN][self._entry.entry_id][CONF_GIVEN_LEVEL] = value
         self.async_write_ha_state()
+        self.hass.bus.fire(f"{DOMAIN}_calibration_changed", {"entry_id": self._entry.entry_id})
 
 
 class PoolPalRawGiven(_CalibrationEntity):
@@ -171,3 +174,4 @@ class PoolPalRawGiven(_CalibrationEntity):
         self._attr_native_value = value
         self.hass.data[DOMAIN][self._entry.entry_id][CONF_RAW_GIVEN] = value
         self.async_write_ha_state()
+        self.hass.bus.fire(f"{DOMAIN}_calibration_changed", {"entry_id": self._entry.entry_id})
