@@ -1,25 +1,27 @@
 import logging
+
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
-from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
+
 from .const import (
-    DOMAIN,
-    CONF_SOURCE_ENTITY,
+    CONF_DEVICE_CONNECTIONS,
+    CONF_DEVICE_IDENTIFIERS,
     CONF_EMPTY_CM_LEVEL,
+    CONF_GIVEN_LEVEL,
     CONF_RAW_EMPTY,
     CONF_RAW_GIVEN,
-    CONF_GIVEN_LEVEL,
-    CONF_DEVICE_IDENTIFIERS,
-    CONF_DEVICE_CONNECTIONS,
-    DEFAULT_RAW_EMPTY,
+    CONF_SOURCE_ENTITY,
     DEFAULT_EMPTY_CM_LEVEL,
-    DEFAULT_RAW_GIVEN,
     DEFAULT_GIVEN_LEVEL,
-    UNIT_CM,
+    DEFAULT_RAW_EMPTY,
+    DEFAULT_RAW_GIVEN,
     DEVICE_CLASS_DISTANCE,
+    DOMAIN,
+    UNIT_CM,
 )
 
 _LOGGER = logging.getLogger(__name__)

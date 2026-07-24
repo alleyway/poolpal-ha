@@ -1,23 +1,25 @@
 import logging
+
 from homeassistant.components.number import NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
+
 from .const import (
-    DOMAIN,
-    CONF_RAW_EMPTY,
+    CONF_DEVICE_CONNECTIONS,
+    CONF_DEVICE_IDENTIFIERS,
     CONF_EMPTY_CM_LEVEL,
     CONF_GIVEN_LEVEL,
+    CONF_RAW_EMPTY,
     CONF_RAW_GIVEN,
-    CONF_DEVICE_IDENTIFIERS,
-    CONF_DEVICE_CONNECTIONS,
-    DEFAULT_RAW_EMPTY,
     DEFAULT_EMPTY_CM_LEVEL,
     DEFAULT_GIVEN_LEVEL,
+    DEFAULT_RAW_EMPTY,
     DEFAULT_RAW_GIVEN,
+    DOMAIN,
 )
 
 _LOGGER = logging.getLogger(__name__)

@@ -1,22 +1,24 @@
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
+
 from .const import (
-    DOMAIN,
-    MANUFACTURER,
-    CONF_SOURCE_ENTITY,
-    CONF_RAW_EMPTY,
+    CONF_DEVICE_CONNECTIONS,
+    CONF_DEVICE_IDENTIFIERS,
     CONF_EMPTY_CM_LEVEL,
     CONF_GIVEN_LEVEL,
+    CONF_RAW_EMPTY,
     CONF_RAW_GIVEN,
-    CONF_DEVICE_IDENTIFIERS,
-    CONF_DEVICE_CONNECTIONS,
-    SOURCE_ENTITY_SUFFIX,
-    DEFAULT_RAW_EMPTY,
+    CONF_SOURCE_ENTITY,
     DEFAULT_EMPTY_CM_LEVEL,
     DEFAULT_GIVEN_LEVEL,
+    DEFAULT_RAW_EMPTY,
     DEFAULT_RAW_GIVEN,
+    DOMAIN,
+    MANUFACTURER,
+    SOURCE_ENTITY_SUFFIX,
 )
 
 
